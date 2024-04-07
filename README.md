@@ -1,10 +1,19 @@
 # lope
 
-_ready to go redis image storage_
+**why**
 
-sometimes you just want a small handy image storage without a hassle to set up,
-especially for personal projects or development environments
+_sometimes you just want a small handy image storage without a hassle to set up,
+especially for personal projects or development environments_
+
+> also, this is mostly for my personal use
+
+**pkgs**
 
 - `node redis` as redis client
 - `pika` for generating file ids
 - `chalk` for pretty logs
+
+**to do**
+
+- file format validation
+- max file size validation
