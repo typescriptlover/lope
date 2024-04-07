@@ -1,6 +1,6 @@
 # lope
 
-`bun install @fell/lope`
+🔮 ready to go redis image storage
 
 **why**
 
