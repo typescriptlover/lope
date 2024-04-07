@@ -10,7 +10,16 @@ _sometimes you just want a quick n easy image storage that does the job, without
 
 **how to**
 
-`(bun/npm/pnpm) install @fell/lope`
+**installation**
+
+_bun_
+`bun install @fell/lope`
+
+_npm_
+`npm install @fell/lope`
+
+_pnpm_
+`pnpm install @fell/lope`
 
 lope is meant to be used server-side, handling file uploading and returning to client.
 
