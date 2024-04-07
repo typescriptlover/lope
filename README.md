@@ -4,7 +4,7 @@
 
 **why**
 
-_sometimes you just want a quick n easy image storage that does the job, without a hassle to set up, especially for personal projects or development environments_
+_sometimes you just want a quick n easy way to store and retrieve images fast, without a hassle to set up, especially for personal projects or development environments_
 
 > also, this is mostly for my personal use
 
