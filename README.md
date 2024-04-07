@@ -17,3 +17,5 @@ especially for personal projects or development environments_
 
 - file format validation
 - max file size validation
+- proper error handling
+- documenting in readme
