@@ -7,7 +7,8 @@
    "files": ["dist"],
    "scripts": {
       "dev": "bun run test/index.ts",
-      "build": "tsup"
+      "build": "tsup",
+      "release": "bun run build && npm publish"
    },
    "devDependencies": {
       "@types/bun": "latest",
