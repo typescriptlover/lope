@@ -22,7 +22,7 @@ export interface LopeFile {
 }
 
 export interface LopeConfig {
-   // storage uri connection string, empty if default uri
+   // node redis client options
    redisOptions?: LopeStorageOptions;
 
    // file configuration for upload
