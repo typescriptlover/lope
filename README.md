@@ -26,49 +26,18 @@ _pnpm_
 
 **how to**
 
-lope is meant to be used server-side, handling file uploading and returning to client.
-
-`lope.ts`
-
-```ts
-const lope = new Lope({
-    storage: "redis",
-    storageOptions: {
-        url: "your redis uri"
-        // url is optional,
-        // otherwise it will use default redis connection if not set.
-    }
-    logging: "default",
-    // "all" | "default"
-    // all will show you retrieval, uploading, failure logs, and anything extra.
-    // default will show you important logs only.
-})
-
-export default lope;
-```
-
-`server.ts`
-
-```ts
-// before starting server,
-// make sure to run lope.
-
-await lope.connect();
-```
-
-write more...
+> will write a next.js along with an express howto
 
 #
 
 **pkgs**
 
-- `redis` from node as redis client
-- `pika` for generating file ids
-- `chalk` for pretty logs
+-  `redis` from node as redis client
+-  `pika` for generating file ids
+-  `chalk` for pretty logs
 
 **to do**
 
-- file format validation
-- max file size validation
-- proper error handling
-- documenting in readme
+-  proper error handling
+-  documenting in readme
+-  uploading with multiple types: `ArrayBuffer`, `UInt8Array`, `File` and `Blob`
