@@ -1,11 +1,10 @@
-import type { LopeConfig } from './types';
+import type { LopeConfig } from "./types";
 
 export default {
-   storage: 'redis',
-   file: {
-      maxSize: 512,
-      allowFormats: ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'],
+   fileOptions: {
+      maxSize: 18,
+      allowFormats: ["png", "jpg", "jpeg", "webp", "gif", "svg"],
       denyFormats: [],
    },
-   logging: 'default',
+   logging: "default",
 } satisfies LopeConfig;

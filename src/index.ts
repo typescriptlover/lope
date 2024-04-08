@@ -1,5 +1,6 @@
 import Pika from "pika-id";
 import { createClient, type RedisClientType } from "redis";
+import { fileTypeFromBuffer } from "file-type";
 
 import defaultConfig from "./config";
 import log from "./log";
@@ -28,9 +29,9 @@ export default class Lope {
          ...config,
       };
 
-      if (this.config.storageOptions) {
+      if (this.config.redisOptions) {
          this.connection = createClient(
-            this.config.storageOptions,
+            this.config.redisOptions,
          ) as RedisClientType;
       }
 
@@ -86,6 +87,43 @@ export default class Lope {
       return true;
    }
 
+   async validateFile(file: Buffer) {
+      const type = await fileTypeFromBuffer(file);
+
+      if (type) {
+         const ext = type.ext as any;
+
+         if (this.config.fileOptions) {
+            const { allowFormats, denyFormats, maxSize } =
+               this.config.fileOptions;
+
+            if (allowFormats && allowFormats.length) {
+               if (!allowFormats.includes(ext)) {
+                  throw new Error(`File format .${ext} is not allowed`);
+               }
+            }
+            if (denyFormats && denyFormats.length) {
+               if (denyFormats.includes(ext)) {
+                  throw new Error(`File format .${ext} is not allowed`);
+               }
+            }
+
+            if (maxSize) {
+               const fileSize = Buffer.byteLength(file);
+               const fileSizeAsMB = parseFloat(
+                  (fileSize / (1024 * 1024)).toFixed(2),
+               );
+
+               if (fileSizeAsMB > maxSize) {
+                  throw new Error(
+                     `File is too large, max size is ${maxSize}MB`,
+                  );
+               }
+            }
+         }
+      }
+   }
+
    async upload(files: Buffer): Promise<string | false>;
    async upload(files: Buffer[]): Promise<Array<string | false>>;
    async upload(
@@ -98,8 +136,10 @@ export default class Lope {
 
          for (let i = 0; i < files.length; ++i) {
             const file = files[i];
-            const fileKey = this.#pika.gen("lope");
 
+            await this.validateFile(file);
+
+            const fileKey = this.#pika.gen("lope");
             const success = await this.connection.set(fileKey, file);
 
             if (success) {
@@ -118,8 +158,10 @@ export default class Lope {
          return fileKeys;
       } else {
          const file = files;
-         const fileKey = this.#pika.gen("lope");
 
+         await this.validateFile(file);
+
+         const fileKey = this.#pika.gen("lope");
          const success = await this.connection.set(fileKey, file);
 
          if (this.config.logging === "all") {
