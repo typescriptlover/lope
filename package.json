@@ -24,5 +24,11 @@
       "redis": "^4.6.13"
    },
    "license": "MIT",
+   "homepage": "https://github.com/typescriptlover/lope/#readme",
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/typescriptlover/lope.git"
+   },
+   "bugs": "https://github.com/typescriptlover/lope/issues",
    "author": "Vignesh Wadhwani <vigywadhwani@gmail.com>"
 }
