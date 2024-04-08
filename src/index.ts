@@ -124,81 +124,104 @@ export default class Lope {
       }
    }
 
-   async upload(files: Buffer): Promise<string | false>;
-   async upload(files: Buffer[]): Promise<Array<string | false>>;
+   async upload(files: Buffer, fileNames?: string): Promise<string | false>;
+   async upload(
+      files: Buffer[],
+      fileNames?: string[],
+   ): Promise<Array<string | false>>;
    async upload(
       files: Buffer | Buffer[],
+      fileNames?: string | string[],
    ): Promise<string | false | Array<string | false>> {
       if (!this.connected) await this.connect();
 
       if (Array.isArray(files)) {
-         let fileKeys: Array<string | false> = [];
+         let fileNamesOut: Array<string | false> = [];
 
          for (let i = 0; i < files.length; ++i) {
             const file = files[i];
 
             await this.validateFile(file);
 
-            const fileKey = this.#pika.gen("lope");
-            const success = await this.connection.set(fileKey, file);
+            let fileName: string;
+
+            if (
+               !Array.isArray(fileNames) ||
+               !fileNames ||
+               !fileNames.length ||
+               fileNames.length < i + 1
+            ) {
+               fileName = this.#pika.gen("lope");
+            } else {
+               fileName = fileNames[i];
+            }
+
+            const success = await this.connection.set(fileName, file);
 
             if (success) {
                if (this.config.logging === "all") {
-                  log("info", `uploaded file ${i + 1} with key ''${fileKey}''`);
+                  log("info", `uploaded file ${i + 1} ''${fileName}''`);
                }
-               fileKeys.push(fileKey);
+               fileNamesOut.push(fileName);
             } else {
                if (this.config.logging === "all") {
                   log("warn", `failed uploading file ${i + 1}`);
                }
-               fileKeys.push(false);
+               fileNamesOut.push(false);
             }
          }
 
-         return fileKeys;
+         return fileNamesOut;
       } else {
          const file = files;
 
          await this.validateFile(file);
 
-         const fileKey = this.#pika.gen("lope");
-         const success = await this.connection.set(fileKey, file);
+         let fileName: string;
+
+         if (!fileNames || !fileNames.length || typeof fileNames !== "string") {
+            fileName = this.#pika.gen("lope");
+         } else {
+            fileName = fileNames;
+         }
+
+         const success = await this.connection.set(fileName, file);
 
          if (this.config.logging === "all") {
             if (success) {
-               log("info", `uploaded file with key ''${fileKey}''`);
+               log("info", `uploaded file ''${fileName}''`);
             } else {
                log("warn", `failed uploading file`);
             }
          }
 
-         return success ? fileKey : false;
+         return success ? fileName : false;
       }
    }
 
-   async get(fileKeys: string): Promise<Buffer | false>;
-   async get(fileKeys: string[]): Promise<Array<Buffer | false>>;
+   async get(fileNames: string): Promise<Buffer | false>;
+   async get(fileNames: string[]): Promise<Array<Buffer | false>>;
    async get(
-      fileKeys: string | string[],
+      fileNames: string | string[],
    ): Promise<Buffer | false | Array<Buffer | false>> {
       if (!this.connected) await this.connect();
 
-      if (Array.isArray(fileKeys)) {
+      if (Array.isArray(fileNames)) {
          const files: Array<Buffer | false> = [];
 
-         for (let i = 0; i < fileKeys.length; ++i) {
-            const fileKey = fileKeys[i];
+         for (let i = 0; i < fileNames.length; ++i) {
+            const fileName = fileNames[i];
 
             const file = await this.connection.get(
                this.connection.commandOptions({ returnBuffers: true }),
-               fileKey,
+               fileName,
             );
 
             if (file) {
                if (this.config.logging === "all") {
                   log(
                      "info",
-                     `retrieved file ${i + 1} with key ''${fileKey}''`,
+                     `retrieved file ${i + 1} with key ''${fileName}''`,
                   );
                }
                files.push(file);
@@ -206,7 +229,7 @@ export default class Lope {
                if (this.config.logging === "all") {
                   log(
                      "warn",
-                     `failed retrieving file ${i + 1} with key ''${fileKey}''`,
+                     `failed retrieving file ${i + 1} with key ''${fileName}''`,
                   );
                }
                files.push(false);
@@ -215,21 +238,21 @@ export default class Lope {
 
          return files;
       } else {
-         const fileKey = fileKeys;
+         const fileName = fileNames;
 
          const file = await this.connection.get(
             this.connection.commandOptions({ returnBuffers: true }),
-            fileKey,
+            fileName,
          );
 
          if (file) {
             if (this.config.logging === "all") {
-               log("info", `retrieved file with key ''${fileKey}''`);
+               log("info", `retrieved file with key ''${fileName}''`);
             }
             return file;
          } else {
             if (this.config.logging === "all") {
-               log("warn", `failed retrieving file with key ''${fileKey}''`);
+               log("warn", `failed retrieving file with key ''${fileName}''`);
             }
             return false;
          }

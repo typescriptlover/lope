@@ -34,6 +34,7 @@ _pnpm_
 
 -  `redis` from node as redis client
 -  `pika` for generating file ids
+-  `file-type` for file validation
 -  `chalk` for pretty logs
 
 **to do**
